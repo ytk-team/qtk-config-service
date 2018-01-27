@@ -1,0 +1,35 @@
+{
+  "name": "@qtk/config-service",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "bin": {
+    "config_service": "bin/config_service"
+  },
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "mocha"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rayanywhere/qtk-config-service.git"
+  },
+  "keywords": [
+    "config"
+  ],
+  "author": "ray",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/rayanywhere/qtk-config-service/issues"
+  },
+  "homepage": "https://github.com/rayanywhere/qtk-config-service#readme",
+  "dependencies": {
+    "@qtk/schema-tcp-framework": "^1.0.5",
+    "log4js": "^2.5.2",
+    "mocha": "^4.1.0",
+    "opts": "^1.2.6",
+    "semantic-schema": "^0.1.9"
+  }
+}

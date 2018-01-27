@@ -1,0 +1,41 @@
+#!/usr/bin/env node
+const opts = require('opts');
+const Server = require("../server");
+opts.parse([
+    {
+        short: 'h',
+        long: 'host',
+        description: 'host to listen',
+        value: true,
+        required: true
+    },
+    {
+        short: 'p',
+        long: 'port',
+        description: 'port to listen',
+        value: true,
+        required: true
+    },
+    {
+        short: 'c',
+        long: 'config-path',
+        description: 'path to config folder',
+        value: true,
+        required: true
+    },
+    {
+        short: 'l',
+        long: 'log-path',
+        description: 'log directory',
+        value: true,
+        required: false
+    }
+], [], true);
+
+let server = new Server({
+    host: opts.get('host'),
+    port:  parseInt(opts.get('port')),
+    configPath: opts.get('config-path'),
+    logPath: opts.get('log-path')
+})
+server.start();
