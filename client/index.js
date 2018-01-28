@@ -21,7 +21,6 @@ module.exports = class {
             }
             this._client = new Client({host: this._host, port: this._port});
             this._client.on('data', ({data: config}) => {
-                console.log('client got config = ' + JSON.stringify(config))
                 this.config = config;
                 resolve();
             });
