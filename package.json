@@ -1,6 +1,6 @@
 {
   "name": "@qtk/config-service",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "",
   "main": "index.js",
   "bin": {
@@ -27,6 +27,7 @@
   "homepage": "https://github.com/rayanywhere/qtk-config-service#readme",
   "dependencies": {
     "@qtk/schema-tcp-framework": "^1.0.6",
+    "chokidar": "^2.0.0",
     "log4js": "^2.5.2",
     "mocha": "^4.1.0",
     "opts": "^1.2.6",

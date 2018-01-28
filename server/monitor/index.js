@@ -1,21 +1,22 @@
-const fs = require('fs');
+const chokidar = require('chokidar');
 const path = require('path');
 const EventEmitter = require('events').EventEmitter;
 
 module.exports = class extends EventEmitter {
     constructor(folder) {
         super();
-        folder = path.resolve(folder);
+        this._folder = path.resolve(folder);
         if (this.config) {
             throw new Error('cannot start the monitor more than once');
         }
-        this.config = require(folder);
+        this.config = require(this._folder);
         logger.info('config loaded');
-        fs.watch(folder, async () => {
-            this._purge(folder);
+        const watcher = chokidar.watch(this._folder);
+        watcher.on('change', () => {
+            this._purge(this._folder);
             let config = null;
             try {
-                config = require(folder);
+                config = require(this._folder);
             }
             catch(err) {
                 logger.error('bad config: ' + err.message);

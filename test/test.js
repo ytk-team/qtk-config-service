@@ -21,14 +21,14 @@ describe('#register-service', function() {
         it("should return the latest config", async function() {
             this.timeout(5000);
 
-            let content = fs.readFileSync(`${configPath}/index.js`, 'utf8');
+            let content = fs.readFileSync(`${configPath}/sys/index.js`, 'utf8');
             content = content.replace(/localhost/g, 'remotehost');
-            fs.writeFileSync(`${configPath}/index.js`, content);
+            fs.writeFileSync(`${configPath}/sys/index.js`, content);
             await sleep();
             assert(this.client.config.sys.host === 'remotehost', 'config mismatch');
             
             content = content.replace(/remotehost/g, 'localhost');
-            fs.writeFileSync(`${configPath}/index.js`, content);
+            fs.writeFileSync(`${configPath}/sys/index.js`, content);
             await sleep();
             assert(this.client.config.sys.host === 'localhost', 'config mismatch');
         });
