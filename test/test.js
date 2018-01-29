@@ -6,16 +6,24 @@ const port = 10000;
 const configPath = `${__dirname}/../example`;
 const fs = require('fs');
 
-describe('#register-service', function() {
-    before(function() {
+function waitForReady(client) {
+    return new Promise((resolve, reject) => {
+        client.on('ready', () => {
+            resolve();
+        });
+    });
+}
+
+describe('#register-service', async function() {
+    before(async function() {
         let server = new Server({host, port, configPath});
         server.start();
         this.client = new Client({host, port});
+        await waitForReady(this.client);
     })
 
     describe("retrieving config", function() {
         it("should return without error", async function() {
-            await this.client.subscribe();
             assert(this.client.config.sys.port === 1234, 'config mismatch');
         });
         it("should return the latest config", async function() {

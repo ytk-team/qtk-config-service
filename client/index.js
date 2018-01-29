@@ -1,29 +1,24 @@
 const Client = require('@qtk/schema-tcp-framework').Client;
 const EventEmitter = require('events').EventEmitter;
-const genuuid = require('uuid/v4');
-
 /**
- * safe to get config only after a successful call to subscribe function
+ * event : ready 
+ * event : update
  */
-module.exports = class {
+module.exports = class extends EventEmitter {
     constructor({host, port}) {
-        this._host = host;
-        this._port = port;
-        this._client = undefined;
+        super();
         this.config = undefined;
-    }
-
-    subscribe() {
-        return new Promise((resolve, reject) => {
-            if (this._client !== undefined) {
-                reject(new Error(`cannot call subscribe function more than once`));
-                return;
+        this._ready = false;
+        const client = new Client({host, port});
+        client.on('data', ({data: config}) => {
+            this.config = config;
+            if (!this._ready) {
+                this._ready = true;
+                this.emit('ready');
             }
-            this._client = new Client({host: this._host, port: this._port});
-            this._client.on('data', ({data: config}) => {
-                this.config = config;
-                resolve();
-            });
+            else {
+                this.emit('update');
+            }
         });
     }
 };
