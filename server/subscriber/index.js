@@ -6,7 +6,7 @@ module.exports = class {
     }
 
     static remove(socket) {
-        subscribers.remove(socket);
+        subscribers.delete(socket);
     }
 
     static retrieveAll() {
