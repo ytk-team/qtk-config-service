@@ -1,7 +1,7 @@
 const chokidar = require('chokidar');
 const path = require('path');
 const EventEmitter = require('events').EventEmitter;
-const { execSync } = require('child_process');
+const { spawn } = require('child_process');
 
 module.exports = class extends EventEmitter {
     constructor(folder) {
@@ -10,14 +10,14 @@ module.exports = class extends EventEmitter {
         if (this.config) {
             throw new Error('cannot start the monitor more than once');
         }
-        this.config = this._getConfig(this._folder);
+        this.config = require(this._folder);
         logger.info('config loaded');
         const watcher = chokidar.watch(this._folder, {
             usePolling: true
         });
-        watcher.on('change', () => {
+        watcher.on('change', async() => {
             try {
-                this.config = this._getConfig(this._folder);
+                this.config = await this._getConfig(this._folder);
                 logger.info('config reloaded');
                 this.emit('update');
             }
@@ -28,11 +28,50 @@ module.exports = class extends EventEmitter {
     }
 
     _getConfig(folder) {
-        let data = execSync(`node ${__dirname}/get_config.js ${folder}`);
-        if (Buffer.isBuffer(data)) data = data.toString();
-        if (data.startsWith('{') == false) 
-            throw new Error(data);
-        return JSON.parse(data);
+        return new Promise((resolve, reject) => {
+            const get = spawn('node', [`${__dirname}/get_config.js`, folder]);
+ 
+            let chunks = [];
+            let errChunks = [];
+    
+            get.stdout.on('data', data => {
+                chunks.push(data);
+            });
+            
+            get.stderr.on('data', data => errChunks.push(data));
+    
+            get.on('close', code => {
+                try {
+                    if (code !== 0) {
+                        return reject(
+                            new Error(
+                                errChunks
+                                    .reduce((prev ,curr) => {
+                                        prev = Buffer.concat([prev, curr]);
+                                        return prev;
+                                    }, Buffer.from([]))
+                                    .toString()
+                            )
+                        );
+                    }
+        
+                    return resolve(
+                        JSON.parse(
+                            chunks
+                                .reduce((prev ,curr) => {
+                                    prev = Buffer.concat([prev, curr]);
+                                    return prev;
+                                }, Buffer.from([]))
+                                .toString()
+                        )
+                    );
+                }
+                catch(error) {
+                    return reject(error);
+                }
+
+            });
+        });
     }
 
 }
