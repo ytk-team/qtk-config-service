@@ -15,15 +15,20 @@ module.exports = class extends EventEmitter {
         const watcher = chokidar.watch(this._folder, {
             usePolling: true
         });
+
+        let shakeKeeper = undefined;
         watcher.on('change', async() => {
-            try {
-                this.config = await this._getConfig(this._folder);
-                logger.info('config reloaded');
-                this.emit('update');
-            }
-            catch (err) {
-                logger.error('bad config: ' + err.message);
-            }
+            if (shakeKeeper !== undefined) clearTimeout(shakeKeeper);
+            shakeKeeper = setTimeout(async() => {
+                try {
+                    this.config = await this._getConfig(this._folder);
+                    logger.info('config reloaded');
+                    this.emit('update');
+                }
+                catch (err) {
+                    logger.error('bad config: ' + err.message);
+                }
+            }, 1000);
         });
     }
 

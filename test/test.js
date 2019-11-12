@@ -57,6 +57,6 @@ describe('#register-service', async function() {
 
 function sleep() {
     return new Promise((resolve, reject) => {
-        setTimeout(() => {resolve()}, 1000);
+        setTimeout(() => {resolve()}, 3000);
     })
 }
