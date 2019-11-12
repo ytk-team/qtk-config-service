@@ -4,7 +4,7 @@ const EventEmitter = require('events').EventEmitter;
 const { spawn } = require('child_process');
 
 module.exports = class extends EventEmitter {
-    constructor(folder) {
+    constructor(folder, shakeKeeperInterval) {
         super();
         this._folder = path.resolve(folder);
         if (this.config) {
@@ -28,7 +28,7 @@ module.exports = class extends EventEmitter {
                 catch (err) {
                     logger.error('bad config: ' + err.message);
                 }
-            }, 1000);
+            }, shakeKeeperInterval);
         });
     }
 

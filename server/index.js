@@ -6,7 +6,7 @@ const assert = require('assert');
 const genuuid = require('uuid/v4');
 
 module.exports = class  {
-	constructor({host, port, configPath, logPath}) {
+	constructor({host, port, configPath, logPath, shakeKeeperInterval = 2000}) {
         log4js.configure({
             appenders: {
                 runtime: logPath ? {
@@ -24,7 +24,7 @@ module.exports = class  {
         });
         global.logger = log4js.getLogger();
 
-        const monitor = new Monitor(configPath);
+        const monitor = new Monitor(configPath, shakeKeeperInterval);
         monitor.on('update', () => {
             for (const socket of Subscriber.retrieveAll()) {
                 this._server.send(socket, {uuid: genuuid().replace(/-/g, ''), data: monitor.config});
